@@ -20,18 +20,11 @@ const ProfileCard = ({ profile = userProfile }: ProfileCardProps) => {
         <div className="bg-[#748386]/10 rounded-2xl p-8 backdrop-blur-sm border border-[#748386]/20">
           <div className="flex items-start space-x-6 mb-8">
             <div className="flex-shrink-0">
-              <div className="relative">
-                <img 
-                  src={profile.avatar} 
-                  alt={profile.name} 
-                  className="w-24 h-24 rounded-full object-cover border-4 border-[#748386]/30 shadow-lg"
-                />
-                <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-[#748386] rounded-full flex items-center justify-center border-3 border-white">
-                  <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0L19.2 12l-4.6-4.6L16 6l6 6-6 6-1.4-1.4z" />
-                  </svg>
-                </div>
-              </div>
+              <img 
+                src={profile.avatar} 
+                alt={profile.name} 
+                className="w-24 h-24 rounded-full object-cover border-4 border-[#748386]/30 shadow-lg"
+              />
             </div>
             
             <div className="flex-1">
