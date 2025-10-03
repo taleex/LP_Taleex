@@ -19,7 +19,7 @@ export const useContactInfo = () => {
       // Separate social links and contact info
       const social = (data || []).filter((item: any) => item.type === 'social').map((item: any) => ({
         icon: (LucideIcons as any)[item.icon_name] || LucideIcons.Mail,
-        href: item.value,
+        href: item.link || item.value,
         label: item.label
       }));
 

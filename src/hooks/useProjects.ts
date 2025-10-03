@@ -17,7 +17,7 @@ export const useProjects = () => {
       if (error) throw error;
       return (data || []).map((project: any) => ({
         title: project.title,
-        category: 'Professional' as const,
+        category: project.category || 'Professional',
         description: project.description,
         image: project.image_url || '/placeholder.svg',
         technologies: project.tags,
@@ -26,7 +26,6 @@ export const useProjects = () => {
         featured: project.featured,
       } as Project));
     },
-    placeholderData: projects,
     retry: 1,
     staleTime: 5 * 60 * 1000,
   });

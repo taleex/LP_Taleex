@@ -37,13 +37,13 @@ const Admin = () => {
               <div className="flex items-center justify-center w-8 h-8 rounded bg-primary/10">
                 <Code2 className="h-4 w-4 text-primary" />
               </div>
-              <span className="text-sm font-medium text-[#0A0908]">Dashboard</span>
+              <span className="text-sm font-medium text-foreground">Dashboard</span>
             </div>
             <div className="flex items-center gap-2">
               <Button 
                 size="sm"
                 onClick={() => navigate('/')}
-                className="bg-[#FF6542] hover:bg-[#E5583B] text-white border-0"
+                variant="default"
               >
                 <Home className="h-4 w-4 mr-2" />
                 View Site
@@ -51,7 +51,7 @@ const Admin = () => {
               <Button 
                 size="sm"
                 onClick={handleLogout}
-                className="bg-[#FF6542] hover:bg-[#E5583B] text-white border-0"
+                variant="default"
               >
                 <LogOut className="h-4 w-4 mr-2" />
                 Logout

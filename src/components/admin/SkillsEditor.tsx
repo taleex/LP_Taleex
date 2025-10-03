@@ -47,7 +47,7 @@ interface Skill {
   svg_url_dark?: string | null;
 }
 
-function SortableSkillCard({ skill, editingSkill, onEdit, onDelete, onSave, setEditingSkill, categories, handleUploadSVG, uploadingLight, uploadingDark }: any) {
+function SortableSkillCard({ skill, editingSkill, onEdit, onDelete, onSave, setEditingSkill, categories, handleUploadSVG, uploadingLight, uploadingDark, fileInputKey, setFileInputKey }: any) {
   const {
     attributes,
     listeners,
@@ -134,6 +134,7 @@ function SortableSkillCard({ skill, editingSkill, onEdit, onDelete, onSave, setE
               <Label className="text-[#0A0908]">Custom SVG Icon (Light Mode)</Label>
               <div className="flex items-center gap-2">
                 <Input
+                  key={`light-${fileInputKey}`}
                   type="file"
                   accept=".svg"
                   onChange={(e) => {
@@ -154,7 +155,10 @@ function SortableSkillCard({ skill, editingSkill, onEdit, onDelete, onSave, setE
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => setEditingSkill({ ...editingSkill, svg_url: null })}
+                    onClick={() => {
+                      setEditingSkill({ ...editingSkill, svg_url: null });
+                      setFileInputKey(Date.now());
+                    }}
                     className="text-red-600 hover:text-red-700"
                   >
                     Clear
@@ -167,6 +171,7 @@ function SortableSkillCard({ skill, editingSkill, onEdit, onDelete, onSave, setE
               <Label className="text-[#0A0908]">Custom SVG Icon (Dark Mode)</Label>
               <div className="flex items-center gap-2">
                 <Input
+                  key={`dark-${fileInputKey}`}
                   type="file"
                   accept=".svg"
                   onChange={(e) => {
@@ -187,7 +192,10 @@ function SortableSkillCard({ skill, editingSkill, onEdit, onDelete, onSave, setE
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => setEditingSkill({ ...editingSkill, svg_url_dark: null })}
+                    onClick={() => {
+                      setEditingSkill({ ...editingSkill, svg_url_dark: null });
+                      setFileInputKey(Date.now());
+                    }}
                     className="text-red-600 hover:text-red-700"
                   >
                     Clear
@@ -220,6 +228,7 @@ const SkillsEditor = () => {
   const [editingSkill, setEditingSkill] = useState<Skill | null>(null);
   const [uploadingLight, setUploadingLight] = useState(false);
   const [uploadingDark, setUploadingDark] = useState(false);
+  const [fileInputKey, setFileInputKey] = useState(Date.now());
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -304,8 +313,10 @@ const SkillsEditor = () => {
         .from('skill-icons')
         .getPublicUrl(filePath);
 
+      // Add cache-busting parameter to force browser to reload new image
+      const cacheBustedUrl = `${publicUrl}?t=${Date.now()}`;
       const updateField = mode === 'light' ? 'svg_url' : 'svg_url_dark';
-      setEditingSkill({ ...editingSkill, [updateField]: publicUrl });
+      setEditingSkill({ ...editingSkill, [updateField]: cacheBustedUrl });
 
       toast({
         title: 'Success',
@@ -463,6 +474,8 @@ const SkillsEditor = () => {
                     handleUploadSVG={handleUploadSVG}
                     uploadingLight={uploadingLight}
                     uploadingDark={uploadingDark}
+                    fileInputKey={fileInputKey}
+                    setFileInputKey={setFileInputKey}
                   />
                 ))}
               </SortableContext>

@@ -1,4 +1,3 @@
-import Header from '@/components/Header';
 import Hero from '@/components/Hero';
 import About from '@/components/About';
 import Skills from '@/components/Skills';
@@ -15,7 +14,6 @@ interface HomeContentProps {
 const HomeContent = ({ scrollY, isChatOpen }: HomeContentProps) => {
   return (
     <>
-      <Header className={isChatOpen ? 'md:block hidden' : ''} />
       <Hero scrollY={scrollY} />
       <About />
       <Skills />

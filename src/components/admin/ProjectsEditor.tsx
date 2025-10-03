@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Plus, Trash2, Save, X, GripVertical } from 'lucide-react';
+import { Loader2, Plus, Trash2, Save, X, GripVertical, Upload } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { useSkills } from '@/hooks/useSkills';
 import { Badge } from '@/components/ui/badge';
@@ -17,6 +17,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import {
   DndContext,
   closestCenter,
@@ -45,9 +52,13 @@ interface Project {
   demo_url: string | null;
   featured: boolean;
   order_index: number;
+  category: 'Personal' | 'Professional' | 'Open Source';
 }
 
 function SortableProjectCard({ project, editingProject, onEdit, onDelete, onSave, setEditingProject, skillCategories }: any) {
+  const { toast } = useToast();
+  const [uploading, setUploading] = useState(false);
+  
   const {
     attributes,
     listeners,
@@ -59,6 +70,63 @@ function SortableProjectCard({ project, editingProject, onEdit, onDelete, onSave
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
+  };
+
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: 'Error',
+        description: 'Please upload an image file',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: 'Error',
+        description: 'Image size should be less than 5MB',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setUploading(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+      const filePath = `${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('project-images')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('project-images')
+        .getPublicUrl(filePath);
+
+      setEditingProject({ ...editingProject, image_url: publicUrl });
+      
+      toast({
+        title: 'Success',
+        description: 'Image uploaded successfully',
+      });
+    } catch (error: any) {
+      toast({
+        title: 'Error',
+        description: error.message,
+        variant: 'destructive',
+      });
+    } finally {
+      setUploading(false);
+    }
   };
 
   return (
@@ -112,6 +180,22 @@ function SortableProjectCard({ project, editingProject, onEdit, onDelete, onSave
             </div>
           </div>
           <div className="space-y-2">
+            <Label className="text-[#0A0908]">Category</Label>
+            <Select
+              value={editingProject.category}
+              onValueChange={(value) => setEditingProject({ ...editingProject, category: value as 'Personal' | 'Professional' | 'Open Source' })}
+            >
+              <SelectTrigger className="bg-white border-gray-300 text-[#0A0908]">
+                <SelectValue placeholder="Select category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Personal">Personal</SelectItem>
+                <SelectItem value="Professional">Professional</SelectItem>
+                <SelectItem value="Open Source">Open Source</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
             <Label className="text-[#0A0908]">Description</Label>
             <Textarea
               value={editingProject.description}
@@ -120,12 +204,36 @@ function SortableProjectCard({ project, editingProject, onEdit, onDelete, onSave
             />
           </div>
           <div className="space-y-2">
-            <Label className="text-[#0A0908]">Image URL</Label>
-            <Input
-              value={editingProject.image_url}
-              onChange={(e) => setEditingProject({ ...editingProject, image_url: e.target.value })}
-              className="bg-white border-gray-300 text-[#0A0908]"
-            />
+            <Label className="text-[#0A0908]">Project Image</Label>
+            <div className="flex gap-4 items-start">
+              {editingProject.image_url && (
+                <div className="relative w-32 h-32 rounded-lg overflow-hidden border-2 border-gray-200">
+                  <img 
+                    src={editingProject.image_url} 
+                    alt="Project preview" 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
+              <div className="flex-1">
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  disabled={uploading}
+                  className="bg-white border-gray-300 text-[#0A0908]"
+                />
+                <p className="text-xs text-gray-500 mt-2">
+                  Upload an image (max 5MB, jpg/png/webp)
+                </p>
+                {uploading && (
+                  <div className="flex items-center gap-2 mt-2 text-sm text-gray-600">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Uploading...
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
@@ -261,7 +369,10 @@ const ProjectsEditor = () => {
         .order('order_index');
 
       if (error) throw error;
-      setProjects(data || []);
+      setProjects((data || []).map((p: any) => ({
+        ...p,
+        category: p.category || 'Professional',
+      })) as Project[]);
     } catch (error: any) {
       toast({
         title: 'Error',
@@ -313,6 +424,7 @@ const ProjectsEditor = () => {
           demo_url: project.demo_url,
           featured: project.featured,
           order_index: project.order_index,
+          category: project.category,
         })
         .eq('id', project.id);
 
@@ -369,6 +481,7 @@ const ProjectsEditor = () => {
           tags: ['React'],
           order_index: projects.length + 1,
           featured: false,
+          category: 'Professional',
         });
 
       toast({

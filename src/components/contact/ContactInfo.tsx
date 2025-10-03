@@ -21,8 +21,8 @@ const ContactInfo = ({ contactInfo = defaultContactInfo, socialLinks = defaultSo
       
       <div className="space-y-6 mb-12">
         <div className="flex items-center gap-4">
-          <div className="bg-[#FF6542] p-3 rounded-full">
-            <Mail size={20} className="text-white" />
+          <div className="bg-primary p-3 rounded-full">
+            <Mail size={20} className="text-primary-foreground" />
           </div>
           <div>
             <div className="theme-text font-medium">Email</div>
@@ -31,8 +31,8 @@ const ContactInfo = ({ contactInfo = defaultContactInfo, socialLinks = defaultSo
         </div>
         
         <div className="flex items-center gap-4">
-          <div className="bg-[#FF6542] p-3 rounded-full">
-            <Phone size={20} className="text-white" />
+          <div className="bg-primary p-3 rounded-full">
+            <Phone size={20} className="text-primary-foreground" />
           </div>
           <div>
             <div className="theme-text font-medium">Phone</div>
@@ -41,8 +41,8 @@ const ContactInfo = ({ contactInfo = defaultContactInfo, socialLinks = defaultSo
         </div>
         
         <div className="flex items-center gap-4">
-          <div className="bg-[#FF6542] p-3 rounded-full">
-            <MapPin size={20} className="text-white" />
+          <div className="bg-primary p-3 rounded-full">
+            <MapPin size={20} className="text-primary-foreground" />
           </div>
           <div>
             <div className="theme-text font-medium">Location</div>
@@ -60,7 +60,7 @@ const ContactInfo = ({ contactInfo = defaultContactInfo, socialLinks = defaultSo
               href={social.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-[#748386]/20 hover:bg-[#FF6542] theme-text p-3 rounded-full transition-all duration-300 hover:scale-110"
+              className="bg-muted hover:bg-primary theme-text hover:text-primary-foreground p-3 rounded-full transition-all duration-300 hover:scale-110"
               aria-label={social.label}
             >
               <social.icon size={20} />

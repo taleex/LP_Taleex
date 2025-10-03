@@ -19,7 +19,6 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Separator } from '@/components/ui/separator';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { ChevronDown } from 'lucide-react';
 
 interface ContactSubmission {
   id: string;
@@ -316,7 +315,6 @@ const MessagesViewer = () => {
                                 <p className="text-sm text-gray-600">{contact.email}</p>
                               </div>
                             </div>
-                            <ChevronDown className="h-5 w-5 text-gray-400 transition-transform group-data-[state=open]:rotate-180" />
                           </div>
                         </CollapsibleTrigger>
 
