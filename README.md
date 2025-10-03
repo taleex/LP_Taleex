@@ -6,6 +6,8 @@ A modern, full-stack personal portfolio website built with React, TypeScript, an
 
 Preview: https://taleex.netlify.app/
 
+<img width="1909" height="986" alt="Captura de ecrã 2025-10-03 124617" src="https://github.com/user-attachments/assets/cf51ddd3-1378-4c86-af97-e262a88a7ba9" />
+
 ---
 
 ## 🌟 Project Concept
