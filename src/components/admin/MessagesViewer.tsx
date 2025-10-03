@@ -149,9 +149,9 @@ const MessagesViewer = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header with Stats */}
+      {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card className="bg-gray-50 border-gray-200 hover:shadow-lg transition-all duration-300">
+        <Card className="bg-gray-100/50 border-gray-200 hover:shadow-lg transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-[#0A0908]">Contact Submissions</CardTitle>
             <Mail className="h-5 w-5 text-[#FF6542]" />
@@ -164,7 +164,7 @@ const MessagesViewer = () => {
           </CardContent>
         </Card>
 
-        <Card className="bg-gray-50 border-gray-200 hover:shadow-lg transition-all duration-300">
+        <Card className="bg-gray-100/50 border-gray-200 hover:shadow-lg transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-[#0A0908]">User Feedback</CardTitle>
             <Lightbulb className="h-5 w-5 text-[#748386]" />
