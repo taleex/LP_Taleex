@@ -18,6 +18,8 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Separator } from '@/components/ui/separator';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { ChevronDown } from 'lucide-react';
 
 interface ContactSubmission {
   id: string;
@@ -149,7 +151,7 @@ const MessagesViewer = () => {
     <div className="space-y-6">
       {/* Header with Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card className="bg-gradient-to-br from-[#FF6542]/5 to-[#FF6542]/10 border-[#FF6542]/20 hover:shadow-lg transition-all duration-300">
+        <Card className="bg-gray-50 border-gray-200 hover:shadow-lg transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-[#0A0908]">Contact Submissions</CardTitle>
             <Mail className="h-5 w-5 text-[#FF6542]" />
@@ -162,7 +164,7 @@ const MessagesViewer = () => {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-[#748386]/5 to-[#748386]/10 border-[#748386]/20 hover:shadow-lg transition-all duration-300">
+        <Card className="bg-gray-50 border-gray-200 hover:shadow-lg transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-[#0A0908]">User Feedback</CardTitle>
             <Lightbulb className="h-5 w-5 text-[#748386]" />
@@ -284,102 +286,98 @@ const MessagesViewer = () => {
           ) : (
             <div className="grid gap-4">
               {contacts.map((contact, index) => (
-                <Card 
-                  key={contact.id} 
-                  className="group bg-white border-gray-200 hover:border-[#FF6542]/50 hover:shadow-xl transition-all duration-300 overflow-hidden animate-fade-in"
-                  style={{ animationDelay: `${index * 50}ms` }}
-                >
-                  {/* Status Bar */}
-                  <div className={`h-1 ${contact.status === 'new' ? 'bg-gradient-to-r from-[#FF6542] to-[#912F40]' : 'bg-gray-200'}`} />
-                  
-                  <CardHeader className="pb-4">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1 space-y-3">
-                        <div className="flex items-center gap-2">
-                          <Badge 
-                            variant={contact.status === 'new' ? 'default' : 'secondary'}
-                            className={contact.status === 'new' ? 'bg-[#FF6542] hover:bg-[#FF6542]/90' : ''}
-                          >
-                            {contact.status}
-                          </Badge>
-                          <span className="text-xs text-gray-500 flex items-center gap-1">
-                            <Clock className="h-3 w-3" />
-                            {formatDate(contact.created_at)}
-                          </span>
-                        </div>
-                        <CardTitle className="text-xl font-bold text-[#0A0908] group-hover:text-[#FF6542] transition-colors">
-                          {contact.subject}
-                        </CardTitle>
-                      </div>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-destructive hover:bg-destructive/10"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Delete contact submission?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              This will permanently delete the message from {contact.name}. This action cannot be undone.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() => handleDeleteContact(contact.id)}
-                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                <Collapsible key={contact.id}>
+                  <Card 
+                    className="group bg-white border-gray-200 hover:border-[#FF6542]/50 hover:shadow-lg transition-all duration-300 animate-fade-in"
+                    style={{ animationDelay: `${index * 50}ms` }}
+                  >
+                    <CardContent className="p-6">
+                      <div className="flex items-start justify-between gap-4">
+                        <CollapsibleTrigger className="flex-1 text-left">
+                          <div className="flex items-start gap-3">
+                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#FF6542] to-[#912F40] flex items-center justify-center flex-shrink-0">
+                              <Mail className="h-5 w-5 text-white" />
+                            </div>
+                            <div className="flex-1 space-y-2">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <Badge 
+                                  variant={contact.status === 'new' ? 'default' : 'secondary'}
+                                  className={contact.status === 'new' ? 'bg-[#FF6542] hover:bg-[#FF6542]/90' : ''}
+                                >
+                                  {contact.status}
+                                </Badge>
+                                <span className="text-xs text-gray-500 flex items-center gap-1">
+                                  <Calendar className="h-3 w-3" />
+                                  {formatDate(contact.created_at)}
+                                </span>
+                              </div>
+                              <div className="space-y-1">
+                                <p className="font-semibold text-[#0A0908]">{contact.subject}</p>
+                                <p className="text-sm text-gray-600">{contact.email}</p>
+                              </div>
+                            </div>
+                            <ChevronDown className="h-5 w-5 text-gray-400 transition-transform group-data-[state=open]:rotate-180" />
+                          </div>
+                        </CollapsibleTrigger>
+
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-destructive hover:bg-destructive/10"
                             >
-                              Delete
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </div>
-                  </CardHeader>
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Delete contact submission?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This will permanently delete the message from {contact.name}. This action cannot be undone.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => handleDeleteContact(contact.id)}
+                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                              >
+                                Delete
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </div>
 
-                  <CardContent className="space-y-4">
-                    {/* Contact Info Cards */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div className="flex items-center gap-3 p-3 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg border border-gray-200">
-                        <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
-                          <User className="h-5 w-5 text-[#748386]" />
+                      <CollapsibleContent className="mt-4 space-y-4">
+                        <Separator />
+                        
+                        {/* Name */}
+                        <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                          <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
+                            <User className="h-5 w-5 text-[#748386]" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="text-xs text-gray-500 mb-0.5">Name</div>
+                            <div className="text-sm font-semibold text-[#0A0908]">{contact.name}</div>
+                          </div>
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="text-xs text-gray-500 mb-0.5">Name</div>
-                          <div className="text-sm font-semibold text-[#0A0908] truncate">{contact.name}</div>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center gap-3 p-3 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg border border-gray-200">
-                        <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
-                          <AtSign className="h-5 w-5 text-[#748386]" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="text-xs text-gray-500 mb-0.5">Email</div>
-                          <div className="text-sm font-semibold text-[#0A0908] truncate">{contact.email}</div>
-                        </div>
-                      </div>
-                    </div>
 
-                    <Separator />
-
-                    {/* Message Content */}
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2">
-                        <MessageSquare className="h-4 w-4 text-[#748386]" />
-                        <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">Message</span>
-                      </div>
-                      <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-                        <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">{contact.message}</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                        {/* Message Content */}
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2">
+                            <MessageSquare className="h-4 w-4 text-[#748386]" />
+                            <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">Message</span>
+                          </div>
+                          <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                            <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">{contact.message}</p>
+                          </div>
+                        </div>
+                      </CollapsibleContent>
+                    </CardContent>
+                  </Card>
+                </Collapsible>
               ))}
             </div>
           )}
