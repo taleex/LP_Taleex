@@ -1,0 +1,170 @@
+@tailwind utilities;
+
+/* Theme-aware utility classes */
+@layer utilities {
+  .text-gradient {
+    background: linear-gradient(135deg, #FF6542 0%, #912F40 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Theme-aware backgrounds */
+  .theme-bg {
+    @apply bg-[#0A0908];
+  }
+  
+  html.light .theme-bg {
+    @apply bg-[#FFFFFA];
+  }
+  
+  .theme-bg-secondary {
+    @apply bg-[#1a1a1a];
+  }
+  
+  html.light .theme-bg-secondary {
+    @apply bg-[#f5f5f5];
+  }
+  
+  .theme-bg-card {
+    @apply bg-[#0A0908]/50;
+  }
+  
+  html.light .theme-bg-card {
+    @apply bg-white/70;
+  }
+
+  .theme-bg-card-solid {
+    @apply bg-[#1a1a1a];
+  }
+  
+  html.light .theme-bg-card-solid {
+    @apply bg-white;
+  }
+
+  .theme-bg-muted {
+    @apply bg-[#2a2a2a];
+  }
+  
+  html.light .theme-bg-muted {
+    @apply bg-gray-50;
+  }
+  
+  /* Theme-aware text colors */
+  .theme-text {
+    @apply text-[#FFFFFA];
+  }
+  
+  html.light .theme-text {
+    @apply text-[#0A0908];
+  }
+  
+  .theme-text-muted {
+    @apply text-[#748386];
+  }
+  
+  html.light .theme-text-muted {
+    @apply text-[#5a5a5a];
+  }
+
+  .theme-text-secondary {
+    @apply text-[#b0b0b0];
+  }
+  
+  html.light .theme-text-secondary {
+    @apply text-[#666666];
+  }
+  
+  /* Theme-aware borders */
+  .theme-border {
+    @apply border-[#748386]/20;
+  }
+  
+  html.light .theme-border {
+    @apply border-gray-200;
+  }
+
+  .theme-border-muted {
+    @apply border-[#748386]/10;
+  }
+  
+  html.light .theme-border-muted {
+    @apply border-gray-100;
+  }
+
+  /* Hero gradients */
+  html.dark .hero-gradient,
+  html:not(.light) .hero-gradient {
+    background: linear-gradient(135deg, #0A0908 0%, #1a1a1a 50%, #0A0908 100%);
+  }
+
+  html.light .hero-gradient {
+    background: linear-gradient(135deg, #FFFFFA 0%, #f8f8f8 50%, #FFFFFA 100%);
+  }
+
+  /* Global scrollbar hidden */
+  html, body {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+  }
+  html::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none; /* Chrome/Safari */
+  }
+
+  html.dark ::-webkit-scrollbar-track,
+  html:not(.light) ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  html.dark ::-webkit-scrollbar-thumb,
+  html:not(.light) ::-webkit-scrollbar-thumb {
+    background: #FF6542;
+    border-radius: 4px;
+  }
+
+  html.dark ::-webkit-scrollbar-thumb:hover,
+  html:not(.light) ::-webkit-scrollbar-thumb:hover {
+    background: #912F40;
+  }
+
+  /* Custom scrollbar for light theme */
+  html.light ::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+  }
+
+  html.light ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  html.light ::-webkit-scrollbar-thumb {
+    background: #FF6542;
+    border-radius: 4px;
+  }
+
+  html.light ::-webkit-scrollbar-thumb:hover {
+    background: #912F40;
+  }
+
+  /* Custom scrollbar for filter dropdown */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: hsl(var(--muted));
+    border-radius: 10px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: hsl(var(--primary));
+    border-radius: 10px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--primary) / 0.8);
+  }
+}
