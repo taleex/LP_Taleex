@@ -4,6 +4,8 @@ A modern, full-stack personal portfolio website built with React, TypeScript, an
 
 **Created by:** [Taleex](https://github.com/taleex)
 
+Preview: https://taleex.netlify.app/
+
 ---
 
 ## 🌟 Project Concept
