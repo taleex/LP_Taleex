@@ -24,7 +24,8 @@ export const useProfile = () => {
         interests: row?.interests || userProfile.interests,
         description: row?.bio ? String(row.bio).split('\n\n') : userProfile.description,
         experience: row?.experience_years ? `${row.experience_years}+ Years` : userProfile.experience,
-        tags: row?.tags && row.tags.length > 0 ? row.tags : userProfile.tags
+        tags: row?.tags && row.tags.length > 0 ? row.tags : userProfile.tags,
+        cvUrl: row?.cv_url || null
       };
     },
     // Fallback to static data if query fails

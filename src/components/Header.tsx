@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useSidebar } from '@/components/ui/sidebar';
 import { Menu } from 'lucide-react';
 import { useDarkMode } from '@/hooks/useDarkMode';
-import { useSiteContent } from '@/hooks/useSiteContent';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 interface HeaderProps {
   className?: string;
@@ -14,7 +15,17 @@ const Header = ({ className = '' }: HeaderProps) => {
   const navigate = useNavigate();
   const { toggleSidebar } = useSidebar();
   const { isDarkMode } = useDarkMode();
-  const { data: siteSettings } = useSiteContent('site');
+  
+  const { data: profile } = useQuery({
+    queryKey: ['profile-cv'],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('profiles')
+        .select('cv_url')
+        .maybeSingle();
+      return data;
+    },
+  });
 
   useEffect(() => {
     const handleScroll = () => {
@@ -67,13 +78,17 @@ const Header = ({ className = '' }: HeaderProps) => {
           </div>
 
           {/* Download CV Button */}
-          <a
-            href="/cv.pdf"
-            download
-            className="bg-[#FF6542] hover:bg-[#912F40] text-white px-4 sm:px-6 py-2 rounded-full transition-colors duration-300 text-sm font-medium"
-          >
-            Download CV
-          </a>
+          {profile?.cv_url && (
+            <a
+              href={profile.cv_url}
+              download
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-[#FF6542] hover:bg-[#912F40] text-white px-4 sm:px-6 py-2 rounded-full transition-colors duration-300 text-sm font-medium"
+            >
+              Download CV
+            </a>
+          )}
         </div>
       </nav>
     </header>

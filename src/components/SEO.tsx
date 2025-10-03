@@ -28,7 +28,7 @@ const SEO = ({
   const finalDescription = description || seoSettings?.default_description || 'Professional web developer portfolio showcasing modern React applications, full-stack projects, and innovative digital solutions.';
   const finalKeywords = keywords || seoSettings?.default_keywords || 'web developer, react developer, full-stack developer, portfolio, javascript, typescript';
   const finalAuthor = author || profile?.name || seoSettings?.default_author || 'Alex Johnson';
-  const finalOgImage = ogImage || seoSettings?.og_image || 'https://lovable.dev/opengraph-image-p98pqg.png';
+  const finalOgImage = ogImage || seoSettings?.og_image || '/placeholder.svg';
   const currentUrl = canonicalUrl || `${window.location.origin}${location.pathname}`;
 
   useEffect(() => {
