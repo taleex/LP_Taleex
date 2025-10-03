@@ -101,7 +101,7 @@ export const FeedbackChat = ({
         type: 'user'
       }]);
     } catch (error) {
-      console.error('Error saving user message:', error);
+      // Silently handle error - feedback still works locally
     }
 
     // Bot response
@@ -120,7 +120,7 @@ export const FeedbackChat = ({
           type: 'bot'
         }]);
       } catch (error) {
-        console.error('Error saving bot message:', error);
+        // Silently handle error - feedback still works locally
       }
 
       setIsTyping(true);
@@ -139,7 +139,7 @@ export const FeedbackChat = ({
             type: 'bot'
           }]);
         } catch (error) {
-          console.error('Error saving bot message:', error);
+          // Silently handle error - feedback still works locally
         }
 
         setIsTyping(false);

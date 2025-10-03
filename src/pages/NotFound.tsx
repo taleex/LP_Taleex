@@ -9,11 +9,7 @@ const NotFound = () => {
   const [countdown, setCountdown] = useState(5);
 
   useEffect(() => {
-    console.error(
-      "404 Error: User attempted to access non-existent route:",
-      location.pathname
-    );
-
+    // Track 404 error silently
     const timer = setInterval(() => {
       setCountdown((prev) => {
         if (prev <= 1) {

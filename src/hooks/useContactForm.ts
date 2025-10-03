@@ -107,8 +107,7 @@ export const useContactForm = () => {
       });
 
       if (emailError) {
-        console.error('Email error:', emailError);
-        // Don't fail the submission if email fails
+        // Don't fail the submission if email fails - message is still saved
       }
       
       toast({
