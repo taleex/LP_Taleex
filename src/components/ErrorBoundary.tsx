@@ -1,6 +1,12 @@
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useQueryErrorResetBoundary } from '@tanstack/react-query';
+import { useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useQueryErrorResetBoundary } from "@tanstack/react-query";
+import {
+  notifySupabaseError,
+  SUPABASE_ERROR_EVENT,
+  type SupabaseErrorPayload,
+  isSupabaseError,
+} from "@/lib/supabase-error";
 
 interface ErrorBoundaryProps {
   children: React.ReactNode;
@@ -8,22 +14,50 @@ interface ErrorBoundaryProps {
 
 export const SupabaseErrorHandler = ({ children }: ErrorBoundaryProps) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { reset } = useQueryErrorResetBoundary();
 
   useEffect(() => {
-    const handleError = (event: ErrorEvent) => {
-      // Check if error is related to Supabase
-      if (event.error?.message?.includes('supabase') || 
-          event.error?.message?.includes('database') ||
-          event.error?.code === 'PGRST') {
-        reset();
-        navigate('/service-unavailable');
+    const handleBrowserError = (event: ErrorEvent) => {
+      if (isSupabaseError(event.error)) {
+        notifySupabaseError(event.error, { source: "window.error" });
       }
     };
 
-    window.addEventListener('error', handleError);
-    return () => window.removeEventListener('error', handleError);
-  }, [navigate, reset]);
+    const handleRejection = (event: PromiseRejectionEvent) => {
+      if (isSupabaseError(event.reason)) {
+        notifySupabaseError(event.reason, { source: "unhandledrejection" });
+      }
+    };
+
+    const handleSupabaseEvent = (event: Event) => {
+      const detail = (event as CustomEvent<SupabaseErrorPayload>).detail;
+
+      // Reset any ongoing queries so the UI can recover later
+      reset();
+
+      if (location.pathname !== "/service-unavailable") {
+        console.error("Redirecting to service-unavailable:", detail?.message);
+        navigate("/service-unavailable", { replace: true });
+      }
+    };
+
+    window.addEventListener("error", handleBrowserError);
+    window.addEventListener("unhandledrejection", handleRejection);
+    window.addEventListener(
+      SUPABASE_ERROR_EVENT,
+      handleSupabaseEvent as EventListener
+    );
+
+    return () => {
+      window.removeEventListener("error", handleBrowserError);
+      window.removeEventListener("unhandledrejection", handleRejection);
+      window.removeEventListener(
+        SUPABASE_ERROR_EVENT,
+        handleSupabaseEvent as EventListener
+      );
+    };
+  }, [navigate, reset, location.pathname]);
 
   return <>{children}</>;
 };
