@@ -12,8 +12,11 @@ const Projects = () => {
   const featuredProjects = projects?.filter(project => project.featured) || [];
 
   return (
-    <section id="projects" className="section-padding">
-      <div className="max-w-7xl mx-auto">
+    <section
+      id="projects"
+      className="section-padding relative flex min-h-screen items-center pt-32 lg:pt-40"
+    >
+      <div className="mx-auto max-w-7xl">
         <div className="text-center mb-20 animate-fade-in-up">
           <h2 className="text-5xl md:text-6xl font-bold mb-6">
             <span className="text-gradient">{projectsSection?.title || 'Featured Projects'}</span>

@@ -66,6 +66,7 @@ export function AppSidebar() {
               }
             }}
             className="text-xl font-bold cursor-pointer hover:opacity-80 transition-opacity duration-300 flex-1 text-left"
+            data-click-sound
           >
             <span className="text-primary">Tal</span>
             <span className="text-[#FFFFFA]">eex</span>
@@ -74,6 +75,7 @@ export function AppSidebar() {
             onClick={toggleSidebar}
             className="p-2 rounded-lg transition-all duration-200 text-[#FFFFFA] hover:text-primary hover:bg-primary/10"
             aria-label="Close sidebar"
+            data-click-sound
           >
             <X size={20} />
           </button>
@@ -93,6 +95,7 @@ export function AppSidebar() {
                     onClick={() => scrollToSection(item.href)}
                     tooltip={item.name}
                     className="transition-all duration-200 hover:bg-primary/10 hover:text-primary rounded-lg px-3 py-2.5 text-sm font-medium text-[#FFFFFA]"
+                    data-click-sound
                   >
                     <item.icon className="h-5 w-5 shrink-0" />
                     <span>{item.name}</span>
@@ -114,6 +117,7 @@ export function AppSidebar() {
                   onClick={toggleTheme}
                   tooltip={isDarkMode ? 'Light Mode' : 'Dark Mode'}
                   className="transition-all duration-200 hover:bg-primary/10 hover:text-primary rounded-lg px-3 py-2.5 text-sm font-medium text-[#FFFFFA]"
+                  data-click-sound
                 >
                   {isDarkMode ? <Sun className="h-5 w-5 shrink-0" /> : <Moon className="h-5 w-5 shrink-0" />}
                   <span>{isDarkMode ? 'Light Mode' : 'Dark Mode'}</span>

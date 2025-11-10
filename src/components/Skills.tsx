@@ -7,8 +7,11 @@ const Skills = () => {
   const { data: skillsSection } = usePageSection('skills');
   
   return (
-    <section id="skills" className="py-12 px-6 lg:px-12 relative overflow-hidden">
-      <div className="max-w-6xl mx-auto relative z-10">
+    <section
+      id="skills"
+      className="section-padding relative flex min-h-screen items-center overflow-hidden pt-32 lg:pt-40"
+    >
+      <div className="relative z-10 mx-auto max-w-6xl">
         <div className="text-center mb-20 animate-fade-in-up">
           <h2 className="text-5xl md:text-6xl font-bold mb-6">
             <span className="text-gradient">{skillsSection?.title || 'Skills'}</span>

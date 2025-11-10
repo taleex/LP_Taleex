@@ -24,6 +24,7 @@ import BackToTop from "./components/BackToTop";
 import { FeedbackChat } from "./components/FeedbackChat";
 import { SupabaseErrorHandler } from "./components/ErrorBoundary";
 import { notifySupabaseError } from "./lib/supabase-error";
+import { ClickSoundManager } from "./components/ClickSoundManager";
 
 const queryCache = new QueryCache({
   onError: (error, query) => {
@@ -96,6 +97,7 @@ const App = () => {
         <Sonner />
         <BrowserRouter>
           <SupabaseErrorHandler>
+            <ClickSoundManager />
             <AppContent />
           </SupabaseErrorHandler>
         </BrowserRouter>

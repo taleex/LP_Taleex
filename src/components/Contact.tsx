@@ -8,8 +8,11 @@ const Contact = () => {
   const { data: contactSection } = usePageSection('contact');
   
   return (
-    <section id="contact" className="section-padding relative overflow-hidden">
-      <div className="max-w-6xl mx-auto relative z-10">
+    <section
+      id="contact"
+      className="section-padding relative flex min-h-screen items-center overflow-hidden pt-32 lg:pt-40"
+    >
+      <div className="relative z-10 mx-auto max-w-6xl">
         <div className="text-center mb-16 animate-fade-in-up">
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
             <span className="text-gradient">{contactSection?.title || "Let's Work Together"}</span>

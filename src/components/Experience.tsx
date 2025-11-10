@@ -13,8 +13,11 @@ const Experience = () => {
   };
 
   return (
-    <section id="experience" className="section-padding relative overflow-hidden">
-      <div className="max-w-5xl mx-auto relative z-10">
+    <section
+      id="experience"
+      className="section-padding relative flex min-h-screen items-center overflow-hidden pt-32 lg:pt-40"
+    >
+      <div className="relative z-10 mx-auto max-w-5xl">
         <div className="text-center mb-20 animate-fade-in-up">
           <h2 className="text-5xl md:text-6xl font-bold mb-6">
             <span className="text-gradient">{experienceSection?.title || 'Work Experience'}</span>

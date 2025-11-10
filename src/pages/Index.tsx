@@ -6,6 +6,7 @@ import { useScrollTracking } from '@/hooks/useScrollTracking';
 import { useDarkMode } from '@/hooks/useDarkMode';
 import { useProfile } from '@/hooks/useProfile';
 import { useSiteContent } from '@/hooks/useSiteContent';
+import SectionNavigator from '@/components/layout/SectionNavigator';
 
 interface IndexProps {
   isChatOpen?: boolean;
@@ -23,6 +24,7 @@ const Index = ({ isChatOpen }: IndexProps) => {
       <SkipToContent />
       <div className="min-h-screen overflow-x-hidden transition-colors duration-300 hero-gradient relative">
         <PageBackground />
+        <SectionNavigator />
         <main id="main-content">
           <HomeContent scrollY={scrollY} isChatOpen={isChatOpen} />
         </main>
