@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export interface SectionConfig {
   id: string;
@@ -52,6 +53,7 @@ export const SectionNavigator = ({
   const prefersReducedMotionRef = useRef(false);
   const touchStartYRef = useRef<number | null>(null);
   const sectionIds = useMemo(() => sections.map((section) => section.id), [sections]);
+  const isMobile = useIsMobile();
 
   const scrollToSection = useCallback((id: string) => {
     const element = document.getElementById(id);
@@ -164,6 +166,7 @@ export const SectionNavigator = ({
   useEffect(() => {
     if (typeof window === "undefined") return undefined;
     if (!sectionIds.length) return undefined;
+    if (isMobile) return undefined;
 
     const shouldHandleEvent = (eventTarget: EventTarget | null) => {
       if (!(eventTarget instanceof HTMLElement)) return true;
@@ -241,7 +244,7 @@ export const SectionNavigator = ({
       window.removeEventListener("touchstart", handleTouchStart);
       window.removeEventListener("touchend", handleTouchEnd);
     };
-  }, [canMoveBetweenSections, moveTo]);
+  }, [canMoveBetweenSections, moveTo, isMobile]);
 
   useEffect(() => {
     return () => {

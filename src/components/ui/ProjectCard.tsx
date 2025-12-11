@@ -42,6 +42,7 @@ export const ProjectCard = ({
     <GlowCard
       glowColor="primary"
       customSize={true}
+      touchAction="pan-y"
       className="w-full theme-bg-card backdrop-blur-sm animate-fade-in-up group"
       style={{ animationDelay: `${index * 0.1}s` }}
     >
