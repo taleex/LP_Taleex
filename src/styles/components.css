@@ -3,7 +3,7 @@
 /* Component-specific styles */
 @layer utilities {
   .card-hover {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .card-hover:hover {
@@ -14,14 +14,16 @@
   /* Dark theme skill tags */
   html.dark .skill-tag,
   html:not(.light) .skill-tag {
-    @apply bg-[#748386]/20 text-[#FFFFFA] px-4 py-2 rounded-full text-sm transition-all duration-300;
-    backdrop-filter: blur(10px);
+    @apply bg-[#748386]/20 text-[#FFFFFA] px-4 py-2 rounded-full text-sm;
+    transition: background-color 0.3s, color 0.3s, transform 0.3s;
+    /* backdrop-filter disabled for performance */
   }
 
   /* Light theme skill tags */
   html.light .skill-tag {
-    @apply bg-[#748386]/15 text-[#0A0908] px-4 py-2 rounded-full text-sm transition-all duration-300 border border-gray-200/50;
-    backdrop-filter: blur(10px);
+    @apply bg-[#748386]/15 text-[#0A0908] px-4 py-2 rounded-full text-sm border border-gray-200/50;
+    transition: background-color 0.3s, color 0.3s, transform 0.3s;
+    /* backdrop-filter disabled for performance */
   }
 
   .skill-tag:hover {
@@ -34,7 +36,8 @@
 
   /* Navigation link effects */
   .nav-link {
-    @apply transition-colors duration-300 relative;
+    @apply relative;
+    transition: color 0.3s ease;
   }
 
   .nav-link::after {
@@ -46,6 +49,7 @@
     left: 0;
     background-color: hsl(var(--primary));
     transition: width 0.3s ease;
+    will-change: width;
   }
 
   .nav-link:hover::after {

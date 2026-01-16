@@ -3,7 +3,9 @@
 /* Animations and keyframes */
 @layer utilities {
   .animate-float {
-    animation: float 6s ease-in-out infinite;
+    /* Disabled: continuous animations reduce performance on weak devices */
+    /* animation: float 6s ease-in-out infinite; */
+    will-change: transform;
   }
 
   .animate-fade-in-up {

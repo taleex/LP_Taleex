@@ -1,3 +1,5 @@
+import { useState, useEffect } from 'react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Header from '@/components/Header';
 import PageBackground from '@/components/layout/PageBackground';
 import ProjectFilters from '@/components/projects/ProjectFilters';
@@ -13,10 +15,13 @@ interface ProjectsPageProps {
   isChatOpen?: boolean;
 }
 
+const PROJECTS_PER_PAGE = 6;
+
 const ProjectsPage = ({ isChatOpen }: ProjectsPageProps) => {
   const { data: projects } = useProjects();
   const { data: projectsSection } = usePageSection('projects-page');
   const { data: seoSettings } = useSiteContent('seo');
+  const [currentPage, setCurrentPage] = useState(1);
   
   const {
     activeCategory,
@@ -30,6 +35,31 @@ const ProjectsPage = ({ isChatOpen }: ProjectsPageProps) => {
     hasActiveFilters,
     clearFilters
   } = useProjectFilters(projects || []);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeCategory, activeSkills, searchQuery]);
+
+  // Calculate pagination
+  const totalPages = Math.ceil(filteredProjects.length / PROJECTS_PER_PAGE);
+  const startIndex = (currentPage - 1) * PROJECTS_PER_PAGE;
+  const endIndex = startIndex + PROJECTS_PER_PAGE;
+  const paginatedProjects = filteredProjects.slice(startIndex, endIndex);
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+      window.scrollTo({ top: 400, behavior: 'auto' });
+    }
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+      window.scrollTo({ top: 400, behavior: 'auto' });
+    }
+  };
 
   return (
     <>
@@ -79,9 +109,40 @@ const ProjectsPage = ({ isChatOpen }: ProjectsPageProps) => {
           <div className="px-6 lg:px-12 pb-16">
             <div className="max-w-6xl mx-auto">
               <ProjectsGrid 
-                projects={filteredProjects} 
+                projects={paginatedProjects} 
                 activeSkill={activeSkills[0]} 
               />
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="mt-12 flex items-center justify-center gap-4">
+                  <button
+                    onClick={handlePreviousPage}
+                    disabled={currentPage === 1}
+                    className="flex items-center gap-2 px-6 py-3 rounded-full border-2 theme-border theme-text hover:border-[#FF6542] hover:text-[#FF6542] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-inherit disabled:hover:text-inherit transition-all duration-300"
+                    aria-label="Previous page"
+                  >
+                    <ChevronLeft size={20} />
+                    <span className="font-medium">Previous</span>
+                  </button>
+
+                  <div className="flex items-center gap-2">
+                    <span className="theme-text-muted text-sm">
+                      Page <span className="font-bold text-primary">{currentPage}</span> of <span className="font-bold text-primary">{totalPages}</span>
+                    </span>
+                  </div>
+
+                  <button
+                    onClick={handleNextPage}
+                    disabled={currentPage === totalPages}
+                    className="flex items-center gap-2 px-6 py-3 rounded-full border-2 theme-border theme-text hover:border-[#FF6542] hover:text-[#FF6542] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-inherit disabled:hover:text-inherit transition-all duration-300"
+                    aria-label="Next page"
+                  >
+                    <span className="font-medium">Next</span>
+                    <ChevronRight size={20} />
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </main>

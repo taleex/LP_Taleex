@@ -61,7 +61,10 @@ const ExperienceCard = ({ experience, index, isExpanded, onToggle }: ExperienceC
                       key={tech}
                       to={`/projects?skill=${encodeURIComponent(tech)}`}
                       onClick={(e) => e.stopPropagation()}
-                      className="skill-tag text-xs cursor-pointer hover:scale-110 hover:shadow-lg hover:shadow-[#FF6542]/30 active:scale-95 transition-all duration-300"
+                      className="skill-tag text-xs cursor-pointer"
+                      style={{transition: 'background-color 0.3s, color 0.3s, transform 0.3s, box-shadow 0.3s'}}
+                      onMouseEnter={(e) => {e.currentTarget.style.transform = 'scale(1.1)'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(255, 101, 66, 0.3)'; }}
+                      onMouseLeave={(e) => {e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '';}}
                     >
                       {tech}
                     </Link>

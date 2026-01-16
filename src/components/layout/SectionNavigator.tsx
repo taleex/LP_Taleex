@@ -60,7 +60,7 @@ export const SectionNavigator = ({
     if (!element) return;
 
     isAnimatingRef.current = true;
-    element.scrollIntoView({ behavior: "smooth", block: "start" });
+    element.scrollIntoView({ behavior: "auto", block: "start" });
 
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);

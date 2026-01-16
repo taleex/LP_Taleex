@@ -1,19 +1,32 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, memo } from 'react';
+import { throttle } from '@/lib/utils';
 
-const ScrollProgress = () => {
+const ScrollProgress = memo(() => {
   const [progress, setProgress] = useState(0);
+  const throttledUpdateRef = useRef<ReturnType<typeof throttle> | null>(null);
 
   useEffect(() => {
+    // Create throttled update function (max once per 16ms = 60 FPS)
     const updateProgress = () => {
       const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
       const scrolled = (window.scrollY / scrollHeight) * 100;
       setProgress(scrolled);
     };
 
-    window.addEventListener('scroll', updateProgress);
-    updateProgress();
+    if (!throttledUpdateRef.current) {
+      throttledUpdateRef.current = throttle(updateProgress, 16);
+    }
 
-    return () => window.removeEventListener('scroll', updateProgress);
+    const handleScroll = () => {
+      if (throttledUpdateRef.current) {
+        throttledUpdateRef.current();
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    updateProgress(); // Initial call
+
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
@@ -24,6 +37,8 @@ const ScrollProgress = () => {
       />
     </div>
   );
-};
+});
+
+ScrollProgress.displayName = 'ScrollProgress';
 
 export default ScrollProgress;

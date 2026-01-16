@@ -10,7 +10,7 @@ const READ_KEY = 'feedback_chat_read';
 interface FeedbackChatProps {
   onOpenChange?: (isOpen: boolean) => void;
 }
-export const FeedbackChat = ({
+const FeedbackChat = ({
   onOpenChange
 }: FeedbackChatProps) => {
   const {
@@ -43,7 +43,7 @@ export const FeedbackChat = ({
   // Auto-scroll to bottom when messages change
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({
-      behavior: 'smooth'
+      behavior: 'auto'
     });
   }, [messages, isTyping]);
   const handleExpand = () => {
@@ -156,7 +156,7 @@ export const FeedbackChat = ({
     setIsTyping(false);
   };
   return <div className="fixed bottom-6 right-6 z-50">
-      {!isExpanded ? <button onClick={handleExpand} className="relative w-16 h-16 rounded-full bg-primary hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center group hover:scale-110" aria-label="Open feedback chat">
+      {!isExpanded ? <button onClick={handleExpand} className="relative w-16 h-16 rounded-full bg-primary hover:bg-primary/90 shadow-lg flex items-center justify-center group" style={{transition: 'background-color 0.3s, box-shadow 0.3s, transform 0.3s'}} onMouseEnter={(e) => {e.currentTarget.style.boxShadow = 'var(--tw-shadow)'; e.currentTarget.style.transform = 'scale(1.1)'; }} onMouseLeave={(e) => {e.currentTarget.style.boxShadow = ''; e.currentTarget.style.transform = '';}} aria-label="Open feedback chat">
           <Bell className={`h-8 w-8 text-primary-foreground ${hasUnreadMessages ? 'animate-[swing_1s_ease-in-out_infinite]' : hasAnimated ? '' : 'animate-[swing_1s_ease-in-out_3]'}`} />
           {hasUnreadMessages && <span className="absolute top-0 right-0 w-4 h-4 bg-destructive rounded-full border-2 border-background animate-pulse">
               <span className="absolute inset-0 w-full h-full bg-destructive rounded-full animate-ping opacity-75"></span>
@@ -220,7 +220,7 @@ export const FeedbackChat = ({
             <form onSubmit={handleSendMessage} className="flex gap-2 items-center">
               <div className="flex-1 relative">
                 <Textarea ref={textareaRef} placeholder="Message..." value={userInput} onChange={e => setUserInput(e.target.value)} onFocus={() => messagesEndRef.current?.scrollIntoView({
-              behavior: 'smooth'
+              behavior: 'auto'
             })} className="resize-none min-h-[44px] max-h-[120px] bg-muted/50 text-white placeholder:text-muted-foreground border border-border rounded-3xl pr-3 pl-4 py-3 text-sm leading-tight focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary focus-visible:border-primary transition-all" rows={1} disabled={conversationStage !== 1 || isTyping} onKeyDown={e => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -236,3 +236,5 @@ export const FeedbackChat = ({
         </Card>}
     </div>;
 };
+
+export default FeedbackChat;

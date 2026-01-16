@@ -100,7 +100,10 @@ const ContactForm = () => {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium py-4 px-6 rounded-lg transition-all duration-300 hover:scale-105 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium py-4 px-6 rounded-lg flex items-center justify-center gap-2 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+          style={{transition: 'background-color 0.3s, box-shadow 0.3s, transform 0.3s'}}
+          onMouseEnter={(e) => {if (!isSubmitting) {e.currentTarget.style.transform = 'scale(1.05)'; e.currentTarget.style.boxShadow = '0 20px 25px rgba(0,0,0,0.15)';}}} 
+          onMouseLeave={(e) => {e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '';}}
         >
           {isSubmitting ? (
             <>

@@ -1,5 +1,6 @@
 import { ExternalLink, Github } from 'lucide-react';
 import { GlowCard } from '@/components/ui/spotlight-card';
+import LazyImage from '@/components/ui/LazyImage';
 import {
   Tooltip,
   TooltipContent,
@@ -49,7 +50,7 @@ export const ProjectCard = ({
       <div className="flex flex-col h-full">
         {/* Project Image - Fixed Height */}
         <div className="relative overflow-hidden rounded-lg flex-shrink-0 h-48">
-          <img 
+          <LazyImage 
             src={image} 
             alt={title}
             className="w-full h-full object-cover"

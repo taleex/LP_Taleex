@@ -1,6 +1,8 @@
 import { useEffect, useRef } from "react";
 
 const CLICK_TARGET_SELECTOR = "[data-click-sound]";
+// Temporarily disabled to improve performance
+const SOUNDS_ENABLED = false;
 
 export const ClickSoundManager = () => {
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -8,6 +10,8 @@ export const ClickSoundManager = () => {
   const lastPlayTimeRef = useRef<number>(0);
 
   useEffect(() => {
+    if (!SOUNDS_ENABLED) return;
+
     const initContext = () => {
       if (audioContextRef.current) return audioContextRef.current;
       const ctx = new AudioContext();

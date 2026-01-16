@@ -48,7 +48,10 @@ const Projects = () => {
         <div className="text-center mt-12 animate-fade-in-up">
           <Link
             to="/projects"
-            className="inline-flex items-center gap-2 bg-transparent theme-border border-2 hover:border-[#FF6542] theme-text hover:text-[#FF6542] px-8 py-3 rounded-full text-lg font-medium transition-all duration-300 hover:scale-105"
+            className="inline-flex items-center gap-2 bg-transparent theme-border border-2 hover:border-[#FF6542] theme-text hover:text-[#FF6542] px-8 py-3 rounded-full text-lg font-medium"
+            style={{transition: 'border-color 0.3s, color 0.3s, transform 0.3s'}}
+            onMouseEnter={(e) => {e.currentTarget.style.transform = 'scale(1.05)'; }}
+            onMouseLeave={(e) => {e.currentTarget.style.transform = '';}}
           >
             <Eye size={20} />
             View All Projects

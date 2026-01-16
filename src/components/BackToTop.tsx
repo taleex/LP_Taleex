@@ -1,27 +1,35 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, memo } from 'react';
 import { ArrowUp } from 'lucide-react';
 import { Button } from './ui/button';
+import { throttle } from '@/lib/utils';
 
-const BackToTop = () => {
+const BackToTop = memo(() => {
   const [isVisible, setIsVisible] = useState(false);
+  const throttledUpdateRef = useRef<ReturnType<typeof throttle> | null>(null);
 
   useEffect(() => {
-    const toggleVisibility = () => {
-      if (window.scrollY > 500) {
-        setIsVisible(true);
-      } else {
-        setIsVisible(false);
+    const updateVisibility = () => {
+      setIsVisible(window.scrollY > 500);
+    };
+
+    if (!throttledUpdateRef.current) {
+      throttledUpdateRef.current = throttle(updateVisibility, 100);
+    }
+
+    const handleScroll = () => {
+      if (throttledUpdateRef.current) {
+        throttledUpdateRef.current();
       }
     };
 
-    window.addEventListener('scroll', toggleVisibility);
-    return () => window.removeEventListener('scroll', toggleVisibility);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
-      behavior: 'smooth',
+      behavior: 'auto',
     });
   };
 
@@ -30,7 +38,10 @@ const BackToTop = () => {
       {isVisible && (
         <Button
           onClick={scrollToTop}
-          className="fixed bottom-8 right-8 z-50 h-12 w-12 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110"
+          className="fixed bottom-8 right-8 z-50 h-12 w-12 rounded-full shadow-lg"
+          style={{transition: 'box-shadow 0.3s, transform 0.3s'}}
+          onMouseEnter={(e) => {e.currentTarget.style.boxShadow = 'var(--tw-shadow)'; e.currentTarget.style.transform = 'scale(1.1)'; }}
+          onMouseLeave={(e) => {e.currentTarget.style.boxShadow = ''; e.currentTarget.style.transform = '';}}
           size="icon"
           aria-label="Back to top"
         >
@@ -39,6 +50,8 @@ const BackToTop = () => {
       )}
     </>
   );
-};
+});
+
+BackToTop.displayName = 'BackToTop';
 
 export default BackToTop;

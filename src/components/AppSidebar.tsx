@@ -42,13 +42,13 @@ export function AppSidebar() {
       setTimeout(() => {
         const element = document.querySelector(href);
         if (element) {
-          element.scrollIntoView({ behavior: 'smooth' });
+          element.scrollIntoView({ behavior: 'auto' });
         }
       }, 100);
     } else {
       const element = document.querySelector(href);
       if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
+        element.scrollIntoView({ behavior: 'auto' });
       }
     }
   };
@@ -60,7 +60,7 @@ export function AppSidebar() {
           <button 
             onClick={() => {
               if (location.pathname === '/') {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                window.scrollTo({ top: 0, behavior: 'auto' });
               } else {
                 navigate('/');
               }

@@ -1,20 +1,22 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSidebar } from '@/components/ui/sidebar';
 import { Menu } from 'lucide-react';
 import { useDarkMode } from '@/hooks/useDarkMode';
 import { useQuery } from '@tanstack/react-query';
+import { throttle } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 
 interface HeaderProps {
   className?: string;
 }
 
-const Header = ({ className = '' }: HeaderProps) => {
+const Header = memo(({ className = '' }: HeaderProps) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const navigate = useNavigate();
   const { toggleSidebar } = useSidebar();
   const { isDarkMode } = useDarkMode();
+  const throttledUpdateRef = useRef<ReturnType<typeof throttle> | null>(null);
   
   const { data: profile } = useQuery({
     queryKey: ['profile-cv'],
@@ -28,23 +30,35 @@ const Header = ({ className = '' }: HeaderProps) => {
   });
 
   useEffect(() => {
-    const handleScroll = () => {
+    const updateScrollState = () => {
       setIsScrolled(window.scrollY > 50);
     };
-    window.addEventListener('scroll', handleScroll);
+
+    if (!throttledUpdateRef.current) {
+      throttledUpdateRef.current = throttle(updateScrollState, 16);
+    }
+
+    const handleScroll = () => {
+      if (throttledUpdateRef.current) {
+        throttledUpdateRef.current();
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
 
   return (
     <header 
-      className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-40 ${
         isScrolled 
           ? isDarkMode 
-            ? 'bg-[#0A0908]/95 backdrop-blur-lg border-b border-[#748386]/20' 
-            : 'bg-white/95 backdrop-blur-lg border-b border-gray-200'
+            ? 'bg-[#0A0908]/95 border-b border-[#748386]/20' 
+            : 'bg-white/95 border-b border-gray-200'
           : 'bg-transparent'
       } ${className}`}
+      style={{ transition: 'background-color 0.3s, border-color 0.3s' }}
     >
       <nav className="max-w-7xl mx-auto px-6 lg:px-12 py-4">
         <div className="flex items-center justify-between">
@@ -52,11 +66,12 @@ const Header = ({ className = '' }: HeaderProps) => {
           <div className="flex items-center gap-4">
             <button
               onClick={toggleSidebar}
-              className={`p-2 rounded-lg transition-colors duration-300 ${
+              className={`p-2 rounded-lg ${
                 isDarkMode 
                   ? 'text-[#FFFFFA] hover:text-[#FF6542] hover:bg-[#FF6542]/10' 
                   : 'text-[#0A0908] hover:text-[#FF6542] hover:bg-[#FF6542]/10'
               }`}
+              style={{ transition: 'color 0.3s, background-color 0.3s' }}
               aria-label="Toggle sidebar"
             >
               <Menu size={24} />
@@ -65,12 +80,13 @@ const Header = ({ className = '' }: HeaderProps) => {
             <button 
               onClick={() => {
                 if (window.location.pathname === '/') {
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                  window.scrollTo({ top: 0, behavior: 'auto' });
                 } else {
                   navigate('/');
                 }
               }}
-              className="text-2xl font-bold cursor-pointer hover:opacity-80 transition-opacity duration-300"
+              className="text-2xl font-bold cursor-pointer hover:opacity-80"
+              style={{ transition: 'opacity 0.3s' }}
             >
               <span className="text-[#FF6542]">Tal</span>
               <span className={isDarkMode ? "text-[#FFFFFA]" : "text-[#0A0908]"}>eex</span>
@@ -93,6 +109,8 @@ const Header = ({ className = '' }: HeaderProps) => {
       </nav>
     </header>
   );
-};
+});
+
+Header.displayName = 'Header';
 
 export default Header;

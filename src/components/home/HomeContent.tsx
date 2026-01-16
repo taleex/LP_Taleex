@@ -14,7 +14,7 @@ interface HomeContentProps {
 const HomeContent = ({ scrollY, isChatOpen }: HomeContentProps) => {
   return (
     <>
-      <Hero scrollY={scrollY} />
+      <Hero />
       <About />
       <Skills />
       <Experience />

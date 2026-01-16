@@ -60,7 +60,10 @@ const ContactInfo = ({ contactInfo = defaultContactInfo, socialLinks = defaultSo
               href={social.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-muted hover:bg-primary theme-text hover:text-primary-foreground p-3 rounded-full transition-all duration-300 hover:scale-110"
+              className="bg-muted hover:bg-primary theme-text hover:text-primary-foreground p-3 rounded-full"
+              style={{transition: 'background-color 0.3s, color 0.3s, transform 0.3s'}}
+              onMouseEnter={(e) => {e.currentTarget.style.transform = 'scale(1.1)'; }}
+              onMouseLeave={(e) => {e.currentTarget.style.transform = '';}}
               aria-label={social.label}
             >
               <social.icon size={20} />

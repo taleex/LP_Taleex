@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -21,10 +21,12 @@ import ServiceUnavailable from "./pages/ServiceUnavailable";
 import ScrollToTop from "./components/ScrollToTop";
 import ScrollProgress from "./components/ScrollProgress";
 import BackToTop from "./components/BackToTop";
-import { FeedbackChat } from "./components/FeedbackChat";
 import { SupabaseErrorHandler } from "./components/ErrorBoundary";
 import { notifySupabaseError } from "./lib/supabase-error";
 import { ClickSoundManager } from "./components/ClickSoundManager";
+
+// Lazy load FeedbackChat component
+const FeedbackChat = lazy(() => import("./components/FeedbackChat"));
 
 const queryCache = new QueryCache({
   onError: (error, query) => {
@@ -46,6 +48,12 @@ const queryClient = new QueryClient({
         }
         return failureCount < 3;
       },
+      // Optimize caching to reduce unnecessary refetches
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      gcTime: 10 * 60 * 1000, // 10 minutes (formerly cacheTime)
+      refetchOnWindowFocus: false, // Don't refetch when window regains focus
+      refetchOnReconnect: false, // Don't refetch on reconnect
+      refetchOnMount: 'stale', // Only refetch if data is stale
     },
   },
 });
@@ -67,7 +75,9 @@ const AppContent = () => {
               <ScrollToTop />
               <ScrollProgress />
               <BackToTop />
-              <FeedbackChat onOpenChange={setIsChatOpen} />
+              <Suspense fallback={null}>
+                <FeedbackChat onOpenChange={setIsChatOpen} />
+              </Suspense>
             </>
           )}
           <Routes>

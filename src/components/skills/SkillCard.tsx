@@ -29,9 +29,20 @@ const SkillCard = ({ skill, index, categoryIndex }: SkillCardProps) => {
   return (
     <div
       onClick={handleSkillClick}
-      className="skill-card group relative theme-bg-card backdrop-blur-sm border theme-border hover:border-primary rounded-xl p-4 flex flex-col items-center justify-center cursor-pointer transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-primary/20 animate-fade-in-up overflow-hidden"
+      className="skill-card group relative theme-bg-card border theme-border rounded-xl p-4 flex flex-col items-center justify-center cursor-pointer animate-fade-in-up overflow-hidden"
       style={{ 
-        animationDelay: `${categoryIndex * 0.1 + index * 0.02}s`
+        animationDelay: `${categoryIndex * 0.1 + index * 0.02}s`,
+        transition: 'border-color 0.3s, box-shadow 0.3s, transform 0.3s'
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.borderColor = 'hsl(var(--primary))';
+        e.currentTarget.style.boxShadow = 'inset 0 0 20px hsl(var(--primary) / 0.1)';
+        e.currentTarget.style.transform = 'scale(1.05)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.borderColor = '';
+        e.currentTarget.style.boxShadow = '';
+        e.currentTarget.style.transform = 'scale(1)';
       }}
     >
       {hasCustomSVG ? (
@@ -41,21 +52,21 @@ const SkillCard = ({ skill, index, categoryIndex }: SkillCardProps) => {
             <img 
               src={isDarkMode ? skill.svg_url_dark : skill.svg_url} 
               alt={skill.name}
-              className="h-10 w-10 mb-2 group-hover:scale-110 transition-transform duration-300"
+              className="h-10 w-10 mb-2"
             />
           ) : (
             // Only one version exists - use for both themes
             <img 
               src={skill.svg_url || skill.svg_url_dark} 
               alt={skill.name}
-              className="h-10 w-10 mb-2 group-hover:scale-110 transition-transform duration-300"
+              className="h-10 w-10 mb-2"
             />
           )}
         </>
       ) : (
-        <IconComponent className="text-4xl mb-2 theme-text group-hover:scale-110 transition-transform duration-300" />
+        <IconComponent className="text-4xl mb-2 theme-text" />
       )}
-      <span className="text-xs font-medium theme-text-muted group-hover:theme-text text-center transition-colors duration-300">
+      <span className="text-xs font-medium theme-text-muted text-center">
         {skill.name}
       </span>
     </div>
