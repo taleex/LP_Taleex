@@ -1,21 +1,23 @@
 import { 
-  SiTypescript, SiJavascript, SiPython, SiReact, SiNodedotjs, 
-  SiPostgresql, SiMongodb, SiNextdotjs, SiTailwindcss, SiFigma,
-  SiGit, SiDocker, SiAmazon, SiRedux, SiGraphql, SiExpress,
-  SiHtml5, SiCss3, SiLinux, SiPhp, SiVuedotjs, SiSharp
+  FaReact, FaNode, FaDatabase, FaDocker, FaGitAlt, FaPython,
+  FaHtml5, FaCss3Alt, FaLinux, FaPhp, FaAws
+} from 'react-icons/fa';
+import { 
+  SiTypescript, SiJavascript, SiNextdotjs, SiTailwindcss, SiFigma,
+  SiPostgresql, SiMongodb, SiRedux, SiGraphql, SiExpress, SiVuedotjs
 } from 'react-icons/si';
 
 export const skillCategories = [
   {
     title: "Frontend Development",
     skills: [
-      { name: "React", icon: SiReact },
+      { name: "React", icon: FaReact },
       { name: "Next.js", icon: SiNextdotjs },
       { name: "Vue.js", icon: SiVuedotjs },
       { name: "TypeScript", icon: SiTypescript },
       { name: "JavaScript", icon: SiJavascript },
-      { name: "HTML5", icon: SiHtml5 },
-      { name: "CSS3", icon: SiCss3 },
+      { name: "HTML5", icon: FaHtml5 },
+      { name: "CSS3", icon: FaCss3Alt },
       { name: "Tailwind", icon: SiTailwindcss },
       { name: "Redux", icon: SiRedux },
     ]
@@ -23,23 +25,23 @@ export const skillCategories = [
   {
     title: "Backend & Databases",
     skills: [
-      { name: "Node.js", icon: SiNodedotjs },
+      { name: "Node.js", icon: FaNode },
       { name: "Express", icon: SiExpress },
-      { name: "Python", icon: SiPython },
+      { name: "Python", icon: FaPython },
       { name: "PostgreSQL", icon: SiPostgresql },
       { name: "MongoDB", icon: SiMongodb },
       { name: "GraphQL", icon: SiGraphql },
-      { name: "PHP", icon: SiPhp },
-      { name: "C#", icon: SiSharp },
+      { name: "PHP", icon: FaPhp },
+      { name: "C#", icon: FaDatabase },
     ]
   },
   {
     title: "Tools & DevOps",
     skills: [
-      { name: "Git", icon: SiGit },
-      { name: "Docker", icon: SiDocker },
-      { name: "AWS", icon: SiAmazon },
-      { name: "Linux", icon: SiLinux },
+      { name: "Git", icon: FaGitAlt },
+      { name: "Docker", icon: FaDocker },
+      { name: "AWS", icon: FaAws },
+      { name: "Linux", icon: FaLinux },
       { name: "Figma", icon: SiFigma },
     ]
   }
