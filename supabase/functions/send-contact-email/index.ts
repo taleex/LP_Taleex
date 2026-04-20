@@ -15,13 +15,106 @@ interface ContactEmailRequest {
   message: string;
 }
 
+// In-memory rate limiting (simple implementation)
+// For production, use Redis or database
+const submissionLimits = new Map<string, number[]>();
+const RATE_LIMIT_WINDOW = 60 * 60 * 1000; // 1 hour
+const MAX_SUBMISSIONS_PER_HOUR = 5;
+
+/**
+ * Get client identifier from request
+ * Uses IP address as fallback if X-Forwarded-For not available
+ */
+const getClientId = (req: Request): string => {
+  const forwarded = req.headers.get("x-forwarded-for");
+  if (forwarded) {
+    return forwarded.split(",")[0].trim();
+  }
+  // Fallback to a generic identifier if IP not available
+  return "unknown-client";
+};
+
+/**
+ * Check if client has exceeded rate limit
+ */
+const isRateLimited = (clientId: string): boolean => {
+  const now = Date.now();
+  const clientSubmissions = submissionLimits.get(clientId) || [];
+
+  // Remove old submissions outside the time window
+  const recentSubmissions = clientSubmissions.filter(
+    (timestamp) => now - timestamp < RATE_LIMIT_WINDOW
+  );
+
+  if (recentSubmissions.length >= MAX_SUBMISSIONS_PER_HOUR) {
+    return true;
+  }
+
+  // Update the map with recent submissions
+  if (recentSubmissions.length > 0) {
+    submissionLimits.set(clientId, recentSubmissions);
+  }
+
+  return false;
+};
+
+/**
+ * Record submission for rate limiting
+ */
+const recordSubmission = (clientId: string): void => {
+  const now = Date.now();
+  const clientSubmissions = submissionLimits.get(clientId) || [];
+  
+  // Remove old submissions outside the time window
+  const recentSubmissions = clientSubmissions.filter(
+    (timestamp) => now - timestamp < RATE_LIMIT_WINDOW
+  );
+
+  // Add current submission
+  recentSubmissions.push(now);
+  submissionLimits.set(clientId, recentSubmissions);
+};
+
 const handler = async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { name, email, subject, message }: ContactEmailRequest = await req.json();
+    // Get client identifier for rate limiting
+    const clientId = getClientId(req);
+
+    // Check rate limit
+    if (isRateLimited(clientId)) {
+      return new Response(
+        JSON.stringify({
+          error: "Too many submissions. Please try again later.",
+          retryAfter: RATE_LIMIT_WINDOW / 1000,
+        }),
+        {
+          status: 429, // Too Many Requests
+          headers: {
+            "Content-Type": "application/json",
+            "Retry-After": String(Math.ceil(RATE_LIMIT_WINDOW / 1000)),
+            ...corsHeaders,
+          },
+        }
+      );
+    }
+
+    const { name, email, subject, message }: ContactEmailRequest =
+      await req.json();
+
+    // Validate input
+    if (!name || !email || !subject || !message) {
+      return new Response(
+        JSON.stringify({ error: "Missing required fields" }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json", ...corsHeaders },
+        }
+      );
+    }
 
     console.log("Sending contact email notification:", { name, email, subject });
 
@@ -54,6 +147,9 @@ const handler = async (req: Request): Promise<Response> => {
       const errorData = await emailResponse.text();
       throw new Error(`Resend API error: ${errorData}`);
     }
+
+    // Record successful submission for rate limiting
+    recordSubmission(clientId);
 
     const emailData = await emailResponse.json();
     console.log("Email sent successfully:", emailData);

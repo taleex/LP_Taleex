@@ -1,3 +1,4 @@
+import DOMPurify from 'dompurify';
 import { userProfile } from '@/data/profile';
 
 interface DetailsCardProps {
@@ -12,7 +13,15 @@ const DetailsCard = ({ profile = userProfile }: DetailsCardProps) => {
       <div className="bg-[#748386]/5 rounded-2xl p-8 backdrop-blur-sm border border-[#748386]/10">
         <div className="space-y-4 theme-text-muted leading-relaxed">
           {profile.description.map((paragraph, index) => (
-            <p key={index} dangerouslySetInnerHTML={{ __html: paragraph }} />
+            <p
+              key={index}
+              dangerouslySetInnerHTML={{
+                __html: DOMPurify.sanitize(paragraph, {
+                  ALLOWED_TAGS: ['b', 'i', 'strong', 'em', 'a', 'br', 'p'],
+                  ALLOWED_ATTR: ['href', 'title', 'target', 'rel']
+                })
+              }}
+            />
           ))}
         </div>
       </div>

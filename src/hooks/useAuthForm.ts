@@ -3,8 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { loginSchema, LoginFormData } from '@/lib/auth-validation';
+import { useRateLimit } from '@/hooks/useRateLimit';
 
 const REMEMBERED_EMAIL_KEY = 'rememberedEmail';
+const LOGIN_RATE_LIMIT_KEY = 'loginAttempts';
 
 export const useAuthForm = () => {
   const [email, setEmail] = useState('');
@@ -14,6 +16,13 @@ export const useAuthForm = () => {
   const [errors, setErrors] = useState<Partial<Record<keyof LoginFormData, string>>>({});
   const navigate = useNavigate();
   const { toast } = useToast();
+  
+  // Rate limiting: 5 attempts per 15 minutes
+  const rateLimit = useRateLimit(LOGIN_RATE_LIMIT_KEY, {
+    maxAttempts: 5,
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    cooldownMs: 60 * 1000, // 1 minute cooldown
+  });
 
   // Load saved email on mount
   useEffect(() => {
@@ -55,7 +64,21 @@ export const useAuthForm = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Check rate limit
+    if (rateLimit.isLocked) {
+      const remainingMsg = rateLimit.remainingMinutes > 0 
+        ? `Try again in ${rateLimit.remainingMinutes} minute${rateLimit.remainingMinutes !== 1 ? 's' : ''}`
+        : 'Please try again shortly';
+      toast({
+        title: 'Too many login attempts',
+        description: `For your security, further login attempts are temporarily disabled. ${remainingMsg}.`,
+        variant: 'destructive',
+      });
+      return;
+    }
+    
     if (!validateForm()) {
+      rateLimit.recordAttempt();
       toast({
         title: 'Validation Error',
         description: 'Please check your input and try again',
@@ -72,6 +95,9 @@ export const useAuthForm = () => {
         password,
       });
 
+      // Record attempt after trying to login (whether success or failure)
+      rateLimit.recordAttempt();
+
       if (error) {
         toast({
           title: 'Login failed',
@@ -86,6 +112,9 @@ export const useAuthForm = () => {
           localStorage.removeItem(REMEMBERED_EMAIL_KEY);
         }
         
+        // Reset rate limit on successful login
+        rateLimit.reset();
+        
         toast({
           title: 'Success',
           description: 'Logged in successfully',
@@ -93,6 +122,7 @@ export const useAuthForm = () => {
         navigate('/admin');
       }
     } catch (error: any) {
+      rateLimit.recordAttempt();
       toast({
         title: 'Error',
         description: 'An unexpected error occurred',
@@ -113,5 +143,9 @@ export const useAuthForm = () => {
     loading,
     errors,
     handleLogin,
+    // Rate limiting info
+    isRateLimited: rateLimit.isLocked,
+    rateLimitRemaining: rateLimit.maxAttempts - rateLimit.attempts,
+    rateLimitAttempts: rateLimit.attempts,
   };
 };

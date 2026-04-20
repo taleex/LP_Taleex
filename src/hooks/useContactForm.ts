@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { z } from 'zod';
 import { useToast } from '@/hooks/use-toast';
+import { useRateLimit } from '@/hooks/useRateLimit';
 
 const contactSchema = z.object({
   name: z.string()
@@ -24,6 +25,8 @@ const contactSchema = z.object({
 type FormData = z.infer<typeof contactSchema>;
 type FormErrors = Partial<Record<keyof FormData, string>>;
 
+const CONTACT_RATE_LIMIT_KEY = 'contactFormSubmissions';
+
 export const useContactForm = () => {
   const { toast } = useToast();
   const [formData, setFormData] = useState<FormData>({
@@ -34,6 +37,13 @@ export const useContactForm = () => {
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // Rate limiting: 3 submissions per hour
+  const rateLimit = useRateLimit(CONTACT_RATE_LIMIT_KEY, {
+    maxAttempts: 3,
+    windowMs: 60 * 60 * 1000, // 1 hour
+    cooldownMs: 30 * 1000, // 30 second cooldown
+  });
 
   const validateField = useCallback((name: keyof FormData, value: string) => {
     try {
@@ -80,6 +90,19 @@ export const useContactForm = () => {
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Check rate limit
+    if (rateLimit.isLocked) {
+      const remainingMsg = rateLimit.remainingMinutes > 0 
+        ? `Try again in ${rateLimit.remainingMinutes} minute${rateLimit.remainingMinutes !== 1 ? 's' : ''}`
+        : 'Please try again shortly';
+      toast({
+        title: 'Too many submissions',
+        description: `For spam prevention, further submissions are temporarily disabled. ${remainingMsg}.`,
+        variant: 'destructive',
+      });
+      return;
+    }
+    
     try {
       setIsSubmitting(true);
       
@@ -100,6 +123,9 @@ export const useContactForm = () => {
       if (dbError) {
         throw new Error('Failed to save submission');
       }
+
+      // Record submission attempt
+      rateLimit.recordAttempt();
 
       // Send email notification
       const { error: emailError } = await supabase.functions.invoke('send-contact-email', {
@@ -134,17 +160,23 @@ export const useContactForm = () => {
           description: "Please check the form fields and try again.",
           variant: "destructive",
         });
+        
+        // Record failed attempt
+        rateLimit.recordAttempt();
       } else {
         toast({
           title: "Submission failed",
           description: "Something went wrong. Please try again.",
           variant: "destructive",
         });
+        
+        // Record failed attempt
+        rateLimit.recordAttempt();
       }
     } finally {
       setIsSubmitting(false);
     }
-  }, [formData, toast]);
+  }, [formData, toast, rateLimit]);
 
   const resetForm = useCallback(() => {
     setFormData({ name: '', email: '', subject: '', message: '' });
@@ -158,6 +190,10 @@ export const useContactForm = () => {
     handleChange,
     handleBlur,
     handleSubmit,
-    resetForm
+    resetForm,
+    // Rate limiting info
+    isRateLimited: rateLimit.isLocked,
+    rateLimitRemaining: rateLimit.maxAttempts - rateLimit.attempts,
+    rateLimitAttempts: rateLimit.attempts,
   };
 };
