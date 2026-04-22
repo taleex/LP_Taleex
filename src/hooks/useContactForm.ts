@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { z } from 'zod';
 import { useToast } from '@/hooks/use-toast';
 import { useRateLimit } from '@/hooks/useRateLimit';
+import DOMPurify from 'dompurify';
 
 const contactSchema = z.object({
   name: z.string()
@@ -26,6 +27,14 @@ type FormData = z.infer<typeof contactSchema>;
 type FormErrors = Partial<Record<keyof FormData, string>>;
 
 const CONTACT_RATE_LIMIT_KEY = 'contactFormSubmissions';
+
+// Sanitize text inputs to prevent XSS
+const sanitizeTextInput = (input: string): string => {
+  return DOMPurify.sanitize(input, {
+    ALLOWED_TAGS: [], // No HTML tags allowed in contact form
+    ALLOWED_ATTR: []
+  }).trim();
+};
 
 export const useContactForm = () => {
   const { toast } = useToast();
@@ -106,8 +115,16 @@ export const useContactForm = () => {
     try {
       setIsSubmitting(true);
       
+      // Sanitize form data to prevent XSS
+      const sanitizedData = {
+        name: sanitizeTextInput(formData.name),
+        email: formData.email, // Email validation handled by Zod
+        subject: sanitizeTextInput(formData.subject),
+        message: sanitizeTextInput(formData.message)
+      };
+      
       // Validate all fields
-      const validatedData = contactSchema.parse(formData);
+      const validatedData = contactSchema.parse(sanitizedData);
       
       // Save to database
       const { supabase } = await import('@/integrations/supabase/client');

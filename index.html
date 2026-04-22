@@ -25,6 +25,7 @@
     <meta http-equiv="X-Frame-Options" content="SAMEORIGIN" />
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
     <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()" />
+    <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains; preload" />
     
     <title>Taleex - Portfolio</title>
     <meta name="description" content="Professional web developer portfolio." />
@@ -40,5 +41,13 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- HTTPS Enforcement Fallback -->
+    <script>
+      // Fallback HTTPS redirect for environments without server-side redirects
+      if (window.location.protocol === 'http:' && window.location.hostname !== 'localhost') {
+        window.location.href = window.location.href.replace('http:', 'https:');
+      }
+    </script>
   </body>
 </html>
